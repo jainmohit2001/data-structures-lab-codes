@@ -38,6 +38,7 @@ int prec(char c){
 struct node* exptree(string s,map<string,int> *m){
 	stack<char> stk1;
 	stack<struct node* > stk2;
+	int f=0;
 
 	for(int i=0;i<s.length();i++){
 		if(s[i]>='0' && s[i]<='9'){
@@ -48,17 +49,18 @@ struct node* exptree(string s,map<string,int> *m){
 				j++;
 			}
 			string temp1 = to_string(temp);
-
+			if(f==0){f=2;}
 			stk2.push(cn(temp1));
 			i = j-1;
 		}
 		else if(s[i] == '('){
+			f=0;
 			stk1.push(s[i]);
 
 		}
 		else if(s[i]=='*' || s[i] == '-' || s[i]=='+' || s[i]=='^' || s[i]=='/'){
 			if(stk1.empty() == 1){
-
+				
 				stk1.push(s[i]);
 			}
 			else{
@@ -67,7 +69,10 @@ struct node* exptree(string s,map<string,int> *m){
 					stk1.push(s[i]);
 				}
 					else if(prec(stk1.top()) < prec(s[i])){
-
+						if(f==0){
+							f=1;
+							
+						}
 					 stk1.push(s[i]);
 
 					}
@@ -89,6 +94,7 @@ struct node* exptree(string s,map<string,int> *m){
 							n->lptr = stk2.top();
 							stk2.pop();
 						}
+						
 						stk2.push(n);
 					}
 					}
@@ -107,16 +113,27 @@ struct node* exptree(string s,map<string,int> *m){
 					stk1.pop();
 					struct node* n = cn(y);
 					n->rptr = stk2.top();
+					
 					stk2.pop();
 					struct node* minus = cn("0");
 
 					if(stk2.empty()==1){
+					
 							n->lptr = minus;
+								
+					}
+
+					else if(f==1){
+						n->lptr = minus;
+								
 					}
 					else{
+						
 						n->lptr = stk2.top();
+						
 						stk2.pop();
 					}
+					
 					stk2.push(n);
 			}
 
@@ -161,6 +178,7 @@ struct node* exptree(string s,map<string,int> *m){
 				n->lptr = stk2.top();
 				stk2.pop();
 			}
+			
 			stk2.push(n);
 		}
 
